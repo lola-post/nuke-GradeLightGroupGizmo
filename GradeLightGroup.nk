@@ -2,13 +2,17 @@ set cut_paste_input [stack 0]
 version 13.2 v6
 push $cut_paste_input
 Group {
- name GradeLightGroup
+ name GradeLightGroup4
+ knobChanged "\nnode = nuke.thisNode()\nk=nuke.thisKnob()\nif k.name() == 'lightgroup':\n    import re\n    lg = k.value()\n    lgRegex=re.compile(r'lg\\d+')\n    aovs = \[\n    'diffuse_direct',\n    'diffuse_indirect',\n    'reflect_direct',\n    'reflect_indirect',\n    'refract_direct',\n    'refract_indirect',\n    'sss_direct',\n    'sss_indirect'\n    ]\n\n    def update_aov_names():\n        \"\"\"\n        Will update all the Shuffles, ShuffleCopys and Merge/From nodes to the correct lightgroup\n        Will look for knobtypes \['in1','in2','out1','out2','Achannels','Bchannels'] within \['Merge2','Shuffle2','Shuffle','ShuffleCopy','ChannelMerge'] to update\n        \"\"\"\n        lgRegex=re.compile(r'lgt\\d+')\n        knobTypes=\['in1','in2','out1','out2','Achannels','Bchannels']\n        with node:\n            message=''\n            for innerNode in nuke.allNodes():\n                if innerNode.Class() in \['Merge2','Shuffle2','Shuffle','ShuffleCopy','ChannelMerge']:\n                    for knob in innerNode.knobs():\n                        if knob in knobTypes:\n                            oldLayer=innerNode\[knob].value()\n                            newLayer=re.sub(lgRegex, lg, oldLayer)\n                            innerNode\[knob].setValue(newLayer)\n    update_aov_names()\n    print ('Updated Callback')\n"
+ label "\[value lightgroup]"
  selected true
- xpos 11661
- ypos -1381
+ xpos 12838
+ ypos -2149
  addUserKnob {20 General}
- addUserKnob {22 get_light_groups l Get_Light_Groups T "import re\nimport nuke\n\nnode = nuke.thisNode()\n\ndef get_layers(thisNode):\n    '''returns a list of all the layers '''\n    channels = thisNode.channels()\n    layers = list( set(\[c.split('.')\[0] for c in channels]) )\n    layers.sort()\n    return layers\n\n\n    \ndef get_lightgroups(node, flag='lgt'):\n    '''returns a list of lights based on output of get_the lightgroup_aovs '''\n    lightGroupLayers=\[]\n    lgRegex=flag+r'\\d+'\n    lgRegex=re.compile(lgRegex)\n    for aov in get_layers(node):\n        if lgRegex.search(aov):\n            lightGroupLayers.append(aov)\n    return lightGroupLayers\n    \ndef get_aovs_per_lightgroup(node):\n    '''Returns a dictionary of lightgroups containing lists of all the aovs under each) '''\n    \n    lightGroupRegex = re.compile(r'(lgt\\d+)(_\\w+_?\\w+)')\n    layers =' '.join ( get_layers(node) )\n    aovsPerLG = lightGroupRegex.findall(layers)\n    aovsPerLGSorted = \{\}\n    for aov in aovsPerLG:\n        lg = aov\[0]\n        if lg not in aovsPerLGSorted:\n            aovsPerLGSorted\[aov\[0]] = \[]\n    for aov in aovsPerLG:\n        aovsPerLGSorted\[aov\[0]].append(aov\[1] )\n                \n    return aovsPerLGSorted\n\n\n        \n\nLGdropDownItems=list ( get_aovs_per_lightgroup(node).keys() )\nprint (LGdropDownItems)\n    \n# lightGroupsDropdown = nuke.Enumeration_Knob('lightgroups','LightGroup',LGdropDownItems )\nnode\['lightgroup'].setValues(LGdropDownItems)\nwith node:\n    control = nuke.toNode('lgController')\n    control\['lightgroup'].setValues(LGdropDownItems)\n\n\n\n\n\n" +STARTLINE}
- addUserKnob {4 lightgroup l LightGroup M {lgt01 lgt02}}
+ addUserKnob {22 get_light_groups l Get_Light_Groups T "import imp\nimport GradeLightGroup_Node_Functions_callbackversion\nimp.reload(GradeLightGroup_Node_Functions_callbackversion)\n\n\nnode = nuke.thisNode()\n\nLGdropDownItems=list ( GradeLightGroup_Node_Functions_callbackversion.get_aovs_per_lightgroup(node).keys() )\nnode\['lightgroup'].setValues(LGdropDownItems)\n\nnode\['knobChanged'].setValue(GradeLightGroup_Node_Functions_callbackversion.callback)" +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {4 lightgroup l LightGroup M {lgt01}}
+ addUserKnob {26 ""}
  addUserKnob {68 output l Output t "If using the gizmo independently you should use \"beauty graded\", if part of a larger lightgroup grading setup you should output \"lightgroup\" only and Plus all the graded lightgroups later." M {"lightgroup graded" "beauty graded"}}
  addUserKnob {20 diffuse l Diffuse}
  addUserKnob {26 diffusedirect l "Diffuse Direct"}
@@ -37,11 +41,13 @@ Group {
  addUserKnob {41 gamma_3 l gamma T Grade4.gamma}
  addUserKnob {41 black l lift T Grade4.black}
  addUserKnob {20 refract l Refract}
+ addUserKnob {26 refract_direct l "Refract Direct"}
  addUserKnob {7 exposure_rrd l "<b>Exposure</b> (stops)" R -4 4}
  addUserKnob {26 grade_4 l Grade}
  addUserKnob {41 multiply_4 l multiply T Grade5.multiply}
  addUserKnob {41 gamma_4 l gamma T Grade5.gamma}
  addUserKnob {41 black_1 l lift T Grade5.black}
+ addUserKnob {26 refract_indirect l "Refract Indirect"}
  addUserKnob {7 exposure_rri l "<b>Exposure</b> (stops)" R -4 4}
  addUserKnob {26 grade_5 l Grade}
  addUserKnob {41 multiply_5 l multiply T Grade6.multiply}
@@ -122,7 +128,7 @@ Group {
   xpos 10
   ypos -471
  }
-set N46ecc000 [stack 0]
+set N360f6400 [stack 0]
  Dot {
   name Dot16
   xpos -128
@@ -142,66 +148,66 @@ set N46ecc000 [stack 0]
   xpos -150
   ypos 3225
  }
-push $N46ecc000
+push $N360f6400
  Dot {
   name Dot17
   xpos 177
   ypos -471
  }
-set Nb23b7000 [stack 0]
+set N360f7400 [stack 0]
  Dot {
   name Dot81
   xpos 637
   ypos -470
  }
-set N46eccc00 [stack 0]
+set N360f7800 [stack 0]
  Dot {
   name Dot82
   xpos 835
   ypos -470
  }
-set N46ecd000 [stack 0]
+set N360f7c00 [stack 0]
  Dot {
   name Dot83
   xpos 1435
   ypos -470
  }
-set N46ecd400 [stack 0]
+set N351cc000 [stack 0]
  Dot {
   name Dot84
   xpos 1582
   ypos -470
  }
-set N46ecd800 [stack 0]
+set N351cc400 [stack 0]
  Dot {
   name Dot85
   xpos 2400
   ypos -470
  }
-set N46ecdc00 [stack 0]
+set N351cc800 [stack 0]
  Dot {
   name Dot86
   xpos 2557
   ypos -470
  }
-set N46eec000 [stack 0]
+set N351ccc00 [stack 0]
  Dot {
   name Dot88
   xpos 3548
   ypos -470
  }
-set N46eec400 [stack 0]
+set N351cd000 [stack 0]
  Dot {
   name Dot89
   xpos 3731
   ypos -470
  }
-add_layer {lgt02_sss_indirect lgt02_sss_indirect.red lgt02_sss_indirect.green lgt02_sss_indirect.blue}
+add_layer {lgt01_sss_indirect lgt01_sss_indirect.red lgt01_sss_indirect.green lgt01_sss_indirect.blue}
  Shuffle2 {
   fromInput1 {{0} B}
-  in1 lgt02_sss_indirect
+  in1 lgt01_sss_indirect
   fromInput2 {{0} B}
-  mappings "4 lgt02_sss_indirect.red 0 0 rgba.red 0 0 lgt02_sss_indirect.green 0 1 rgba.green 0 1 lgt02_sss_indirect.blue 0 2 rgba.blue 0 2 black -1 -1 rgba.alpha 0 3"
+  mappings "4 lgt01_sss_indirect.red 0 0 rgba.red 0 0 lgt01_sss_indirect.green 0 1 rgba.green 0 1 lgt01_sss_indirect.blue 0 2 rgba.blue 0 2 black -1 -1 rgba.alpha 0 3"
   name sss_indirect
   label "\[value in1]"
   xpos 3709
@@ -221,7 +227,6 @@ add_layer {lgt02_sss_indirect lgt02_sss_indirect.red lgt02_sss_indirect.green lg
  Grade {
   maskChannelInput -rgba.alpha
   name Grade8
-  selected true
   xpos 3709
   ypos 26
  }
@@ -230,20 +235,20 @@ add_layer {lgt02_sss_indirect lgt02_sss_indirect.red lgt02_sss_indirect.green lg
   xpos 3731
   ypos 2761
  }
-set N123a4800 [stack 0]
+set N35ece400 [stack 0]
  Dot {
   name Dot15
   xpos 381
   ypos 2867
  }
-push $N123a4800
-push $N46eec400
-add_layer {lgt02_sss_direct lgt02_sss_direct.red lgt02_sss_direct.green lgt02_sss_direct.blue}
+push $N35ece400
+push $N351cd000
+add_layer {lgt01_sss_direct lgt01_sss_direct.red lgt01_sss_direct.green lgt01_sss_direct.blue}
  Shuffle2 {
   fromInput1 {{0} B}
-  in1 lgt02_sss_direct
+  in1 lgt01_sss_direct
   fromInput2 {{0} B}
-  mappings "4 lgt02_sss_direct.red 0 0 rgba.red 0 0 lgt02_sss_direct.green 0 1 rgba.green 0 1 lgt02_sss_direct.blue 0 2 rgba.blue 0 2 black -1 -1 rgba.alpha 0 3"
+  mappings "4 lgt01_sss_direct.red 0 0 rgba.red 0 0 lgt01_sss_direct.green 0 1 rgba.green 0 1 lgt01_sss_direct.blue 0 2 rgba.blue 0 2 black -1 -1 rgba.alpha 0 3"
   name sss_direct
   label "\[value in1]"
   xpos 3526
@@ -271,21 +276,21 @@ add_layer {lgt02_sss_direct lgt02_sss_direct.red lgt02_sss_direct.green lgt02_ss
   xpos 3548
   ypos 2473
  }
-set Nefb6c800 [stack 0]
+set N35ecf800 [stack 0]
  Dot {
   name Dot11
   xpos 380
   ypos 2556
  }
-push $Nefb6c800
-push $N46eec000
-add_layer {lgt02_refract_indirect lgt02_refract_indirect.red lgt02_refract_indirect.green lgt02_refract_indirect.blue}
+push $N35ecf800
+push $N351ccc00
+add_layer {lgt01_refract_indirect lgt01_refract_indirect.red lgt01_refract_indirect.green lgt01_refract_indirect.blue}
  Shuffle2 {
   fromInput1 {{0} B}
-  in1 lgt02_refract_indirect
+  in1 lgt01_refract_indirect
   fromInput2 {{0} B}
   in2 alpha
-  mappings "4 lgt02_refract_indirect.red 0 0 rgba.red 0 0 lgt02_refract_indirect.green 0 1 rgba.green 0 1 lgt02_refract_indirect.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  mappings "4 lgt01_refract_indirect.red 0 0 rgba.red 0 0 lgt01_refract_indirect.green 0 1 rgba.green 0 1 lgt01_refract_indirect.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
   name refract_indirect
   label "\[value in1]"
   xpos 2531
@@ -318,16 +323,16 @@ add_layer {lgt02_refract_indirect lgt02_refract_indirect.red lgt02_refract_indir
   xpos 370
   ypos 1931
  }
-set Nf191c00 [stack 0]
-push $Nf191c00
-push $N46ecdc00
-add_layer {lgt02_refract_direct lgt02_refract_direct.red lgt02_refract_direct.green lgt02_refract_direct.blue}
+set N360a5000 [stack 0]
+push $N360a5000
+push $N351cc800
+add_layer {lgt01_refract_direct lgt01_refract_direct.red lgt01_refract_direct.green lgt01_refract_direct.blue}
  Shuffle2 {
   fromInput1 {{0} B}
-  in1 lgt02_refract_direct
+  in1 lgt01_refract_direct
   fromInput2 {{0} B}
   in2 alpha
-  mappings "4 lgt02_refract_direct.red 0 0 rgba.red 0 0 lgt02_refract_direct.green 0 1 rgba.green 0 1 lgt02_refract_direct.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  mappings "4 lgt01_refract_direct.red 0 0 rgba.red 0 0 lgt01_refract_direct.green 0 1 rgba.green 0 1 lgt01_refract_direct.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
   name refract_direct
   label "\[value in1]"
   xpos 2378
@@ -360,16 +365,16 @@ add_layer {lgt02_refract_direct lgt02_refract_direct.red lgt02_refract_direct.gr
   xpos 373
   ypos 1511
  }
-set Nfa390c00 [stack 0]
-push $Nfa390c00
-push $N46ecd800
-add_layer {lgt02_reflect_indirect lgt02_reflect_indirect.red lgt02_reflect_indirect.green lgt02_reflect_indirect.blue}
+set N35ac0400 [stack 0]
+push $N35ac0400
+push $N351cc400
+add_layer {lgt01_reflect_indirect lgt01_reflect_indirect.red lgt01_reflect_indirect.green lgt01_reflect_indirect.blue}
  Shuffle2 {
   fromInput1 {{0} B}
-  in1 lgt02_reflect_indirect
+  in1 lgt01_reflect_indirect
   fromInput2 {{0} B}
   in2 alpha
-  mappings "4 lgt02_reflect_indirect.red 0 0 rgba.red 0 0 lgt02_reflect_indirect.green 0 1 rgba.green 0 1 lgt02_reflect_indirect.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  mappings "4 lgt01_reflect_indirect.red 0 0 rgba.red 0 0 lgt01_reflect_indirect.green 0 1 rgba.green 0 1 lgt01_reflect_indirect.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
   name reflect_indirect
   label "\[value in1]"
   xpos 1560
@@ -402,16 +407,16 @@ add_layer {lgt02_reflect_indirect lgt02_reflect_indirect.red lgt02_reflect_indir
   xpos 343
   ypos 1266
  }
-set Nfa391000 [stack 0]
-push $Nfa391000
-push $N46ecd400
-add_layer {lgt02_reflect_direct lgt02_reflect_direct.red lgt02_reflect_direct.green lgt02_reflect_direct.blue}
+set N35ac1800 [stack 0]
+push $N35ac1800
+push $N351cc000
+add_layer {lgt01_reflect_direct lgt01_reflect_direct.red lgt01_reflect_direct.green lgt01_reflect_direct.blue}
  Shuffle2 {
   fromInput1 {{0} B}
-  in1 lgt02_reflect_direct
+  in1 lgt01_reflect_direct
   fromInput2 {{0} B}
   in2 alpha
-  mappings "4 lgt02_reflect_direct.red 0 0 rgba.red 0 0 lgt02_reflect_direct.green 0 1 rgba.green 0 1 lgt02_reflect_direct.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  mappings "4 lgt01_reflect_direct.red 0 0 rgba.red 0 0 lgt01_reflect_direct.green 0 1 rgba.green 0 1 lgt01_reflect_direct.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
   name reflect_direct
   label "\[value in1]"
   xpos 1413
@@ -444,20 +449,20 @@ add_layer {lgt02_reflect_direct lgt02_reflect_direct.red lgt02_reflect_direct.gr
   xpos 378
   ypos 980
  }
-set Nfa391400 [stack 0]
-push $Nfa391400
-push $N46ecd000
-add_layer {lgt02_diffuse_indirect lgt02_diffuse_indirect.red lgt02_diffuse_indirect.green lgt02_diffuse_indirect.blue}
+set N358a0c00 [stack 0]
+push $N358a0c00
+push $N360f7c00
+add_layer {lgt01_diffuse_indirect lgt01_diffuse_indirect.red lgt01_diffuse_indirect.green lgt01_diffuse_indirect.blue}
  Shuffle2 {
   fromInput1 {{0} B}
-  in1 lgt02_diffuse_indirect
+  in1 lgt01_diffuse_indirect
   fromInput2 {{0} B}
   in2 alpha
-  mappings "4 lgt02_diffuse_indirect.red 0 0 rgba.red 0 0 lgt02_diffuse_indirect.green 0 1 rgba.green 0 1 lgt02_diffuse_indirect.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  mappings "4 lgt01_diffuse_indirect.red 0 0 rgba.red 0 0 lgt01_diffuse_indirect.green 0 1 rgba.green 0 1 lgt01_diffuse_indirect.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
   name diffuse_indirect
   label "\[value in1]"
   xpos 813
-  ypos -339
+  ypos -337
  }
  EXPTool {
   mode Stops
@@ -486,9 +491,9 @@ add_layer {lgt02_diffuse_indirect lgt02_diffuse_indirect.red lgt02_diffuse_indir
   xpos 342
   ypos 374
  }
-set Nfa391800 [stack 0]
-push $Nfa391800
-push $N46eccc00
+set N35472000 [stack 0]
+push $N35472000
+push $N360f7800
 add_layer {lgt01_diffuse_direct lgt01_diffuse_direct.red lgt01_diffuse_direct.green lgt01_diffuse_direct.blue}
  Shuffle2 {
   fromInput1 {{0} B}
@@ -498,8 +503,8 @@ add_layer {lgt01_diffuse_direct lgt01_diffuse_direct.red lgt01_diffuse_direct.gr
   mappings "4 lgt01_diffuse_direct.red 0 0 rgba.red 0 0 lgt01_diffuse_direct.green 0 1 rgba.green 0 1 lgt01_diffuse_direct.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
   name diffuse_direct
   label "\[value in1]"
-  xpos 615
-  ypos -335
+  xpos 622
+  ypos -341
  }
  EXPTool {
   mode Stops
@@ -523,10 +528,10 @@ add_layer {lgt01_diffuse_direct lgt01_diffuse_direct.red lgt01_diffuse_direct.gr
   xpos 305
   ypos 125
  }
-set Nfa391c00 [stack 0]
-push $Nfa391c00
-push $Nb23b7000
-push $Nb23b7000
+set N35473000 [stack 0]
+push $N35473000
+push $N360f7400
+push $N360f7400
  Merge2 {
   inputs 2
   operation from
@@ -535,93 +540,93 @@ push $Nb23b7000
   tile_color 0xff0000ff
   label "\[value Achannels]"
   xpos 333
-  ypos -343
+  ypos -348
  }
-set N4deacc00 [stack 0]
-push $N4deacc00
+set N35473400 [stack 0]
+push $N35473400
  Merge2 {
   inputs 2
   operation from
-  Achannels lgt02_diffuse_indirect
+  Achannels lgt01_diffuse_indirect
   name from_diffuse_indirect
   tile_color 0xff0000ff
   label "\[value Achannels]"
   xpos 333
   ypos -298
  }
-set N4dead000 [stack 0]
-push $N4dead000
+set N35473800 [stack 0]
+push $N35473800
  Merge2 {
   inputs 2
   operation from
-  Achannels lgt02_reflect_direct
+  Achannels lgt01_reflect_direct
   name from_reflect_direct
   tile_color 0xff0000ff
   label "\[value Achannels]"
   xpos 333
   ypos -258
  }
-set N4dead400 [stack 0]
-push $N4dead400
+set N35473c00 [stack 0]
+push $N35473c00
  Merge2 {
   inputs 2
   operation from
-  Achannels lgt02_reflect_indirect
+  Achannels lgt01_reflect_indirect
   name from_reflect_indirect
   tile_color 0xff0000ff
   label "\[value Achannels]"
   xpos 333
   ypos -218
  }
-set N4dead800 [stack 0]
-push $N4dead800
+set N35bc6000 [stack 0]
+push $N35bc6000
  Merge2 {
   inputs 2
   operation from
-  Achannels lgt02_refract_direct
+  Achannels lgt01_refract_direct
   name from_refract_direct
   tile_color 0xff0000ff
   label "\[value Achannels]"
   xpos 333
   ypos -178
  }
-set N4deadc00 [stack 0]
-push $N4deadc00
+set N35bc6400 [stack 0]
+push $N35bc6400
  Merge2 {
   inputs 2
   operation from
-  Achannels lgt02_refract_indirect
+  Achannels lgt01_refract_indirect
   name from_refract_indirect
   tile_color 0xff0000ff
   label "\[value Achannels]"
   xpos 333
   ypos -136
  }
-set Ncb3e2000 [stack 0]
-push $Ncb3e2000
+set N35bc6800 [stack 0]
+push $N35bc6800
  Merge2 {
   inputs 2
   operation from
-  Achannels lgt02_sss_direct
+  Achannels lgt01_sss_direct
   name from_sss_direct
   tile_color 0xff0000ff
   label "\[value Achannels]"
   xpos 333
   ypos -96
  }
-set Ncb3e2400 [stack 0]
-push $Ncb3e2400
+set N35bc6c00 [stack 0]
+push $N35bc6c00
  Merge2 {
   inputs 2
   operation from
-  Achannels lgt02_sss_indirect
+  Achannels lgt01_sss_indirect
   name from_sss_indirect
   tile_color 0xff0000ff
   label "\[value Achannels]"
   xpos 333
   ypos -56
  }
-push $Nb23b7000
+push $N360f7400
  Remove {
   channels rgb
   name remove_rgb
@@ -668,7 +673,7 @@ push $Nb23b7000
   black red
   white green
   red2 blue
-  out2 lgt02_diffuse_indirect
+  out2 lgt01_diffuse_indirect
   name Copy_diffuse_indirect
   label "\[value out2]"
   xpos 155
@@ -687,7 +692,7 @@ push $Nb23b7000
   black red
   white green
   red2 blue
-  out2 lgt02_reflect_direct
+  out2 lgt01_reflect_direct
   name Copy_reflect_direct
   label "\[value out2]"
   xpos 155
@@ -706,7 +711,7 @@ push $Nb23b7000
   black red
   white green
   red2 blue
-  out2 lgt02_reflect_indirect
+  out2 lgt01_reflect_indirect
   name Copy_reflect_indirect
   label "\[value out2]"
   xpos 155
@@ -725,7 +730,7 @@ push $Nb23b7000
   black red
   white green
   red2 blue
-  out2 lgt02_refract_direct
+  out2 lgt01_refract_direct
   name Copy_refract_direct
   label "\[value out2]"
   xpos 152
@@ -744,7 +749,7 @@ push $Nb23b7000
   black red
   white green
   red2 blue
-  out2 lgt02_refract_indirect
+  out2 lgt01_refract_indirect
   name Copy_refract_indirect
   label "\[value out2]"
   xpos 152
@@ -763,7 +768,7 @@ push $Nb23b7000
   black red
   white green
   red2 blue
-  out2 lgt02_sss_direct
+  out2 lgt01_sss_direct
   name Copy_sss_direct
   label "\[value out2]"
   xpos 155
@@ -782,13 +787,13 @@ push $Nb23b7000
   black red
   white green
   red2 blue
-  out2 lgt02_sss_indirect
+  out2 lgt01_sss_indirect
   name Copy_sss_indirect
   label "\[value out2]"
   xpos 155
   ypos 3000
  }
-push $N46ecc000
+push $N360f6400
  Keymix {
   inputs 3
   name Keymix1
