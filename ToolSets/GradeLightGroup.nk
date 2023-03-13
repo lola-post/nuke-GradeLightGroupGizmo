@@ -1,0 +1,808 @@
+set cut_paste_input [stack 0]
+version 13.2 v6
+push $cut_paste_input
+Group {
+ name GradeLightGroup4
+ knobChanged "\nnode = nuke.thisNode()\nk=nuke.thisKnob()\nif k.name() == 'lightgroup':\n    import re\n    lg = k.value()\n    lgRegex=re.compile(r'lg\\d+')\n    aovs = \[\n    'diffuse_direct',\n    'diffuse_indirect',\n    'reflect_direct',\n    'reflect_indirect',\n    'refract_direct',\n    'refract_indirect',\n    'sss_direct',\n    'sss_indirect'\n    ]\n\n    def update_aov_names():\n        \"\"\"\n        Will update all the Shuffles, ShuffleCopys and Merge/From nodes to the correct lightgroup\n        Will look for knobtypes \['in1','in2','out1','out2','Achannels','Bchannels'] within \['Merge2','Shuffle2','Shuffle','ShuffleCopy','ChannelMerge'] to update\n        \"\"\"\n        lgRegex=re.compile(r'lgt\\d+')\n        knobTypes=\['in1','in2','out1','out2','Achannels','Bchannels']\n        with node:\n            message=''\n            for innerNode in nuke.allNodes():\n                if innerNode.Class() in \['Merge2','Shuffle2','Shuffle','ShuffleCopy','ChannelMerge']:\n                    for knob in innerNode.knobs():\n                        if knob in knobTypes:\n                            oldLayer=innerNode\[knob].value()\n                            newLayer=re.sub(lgRegex, lg, oldLayer)\n                            innerNode\[knob].setValue(newLayer)\n    update_aov_names()\n    print ('Updated Callback')\n"
+ label "\[value lightgroup]"
+ selected true
+ xpos 12838
+ ypos -2149
+ addUserKnob {20 General}
+ addUserKnob {22 get_light_groups l Get_Light_Groups T "import imp\nimport GradeLightGroup_Node_Functions_callbackversion\nimp.reload(GradeLightGroup_Node_Functions_callbackversion)\n\n\nnode = nuke.thisNode()\n\nLGdropDownItems=list ( GradeLightGroup_Node_Functions_callbackversion.get_aovs_per_lightgroup(node).keys() )\nnode\['lightgroup'].setValues(LGdropDownItems)\n\nnode\['knobChanged'].setValue(GradeLightGroup_Node_Functions_callbackversion.callback)" +STARTLINE}
+ addUserKnob {26 ""}
+ addUserKnob {4 lightgroup l LightGroup M {lgt01}}
+ addUserKnob {26 ""}
+ addUserKnob {68 output l Output t "If using the gizmo independently you should use \"beauty graded\", if part of a larger lightgroup grading setup you should output \"lightgroup\" only and Plus all the graded lightgroups later." M {"lightgroup graded" "beauty graded"}}
+ addUserKnob {20 diffuse l Diffuse}
+ addUserKnob {26 diffusedirect l "Diffuse Direct"}
+ addUserKnob {7 exposure_dd l "<b>Exposure</b> (stops)" R -4 4}
+ addUserKnob {26 grade l Grade}
+ addUserKnob {41 multiply T Grade1.multiply}
+ addUserKnob {41 gamma T Grade1.gamma}
+ addUserKnob {41 add l offset T Grade1.add}
+ addUserKnob {26 diffuse_indirect l "Diffuse Indirect"}
+ addUserKnob {7 exposure_di l "<b>Exposure</b> (stops)" R -4 4}
+ addUserKnob {26 grade_1 l Grade}
+ addUserKnob {41 multiply_1 l multiply T Grade2.multiply}
+ addUserKnob {41 gamma_1 l gamma T Grade2.gamma}
+ addUserKnob {41 add_1 l offset T Grade2.add}
+ addUserKnob {20 reflect l Reflect}
+ addUserKnob {26 reflect_direct l "Reflect Direct"}
+ addUserKnob {7 exposure_rd l "<b>Exposure</b> (stops)" R -4 4}
+ addUserKnob {26 grade_2 l Grade}
+ addUserKnob {41 multiply_2 l multiply T Grade3.multiply}
+ addUserKnob {41 gamma_2 l gamma T Grade3.gamma}
+ addUserKnob {41 add_2 l offset T Grade3.add}
+ addUserKnob {26 reflect_indirect l "Reflect Indirect"}
+ addUserKnob {7 exposure_ri l "<b>Exposure</b> (stops)" R -4 4}
+ addUserKnob {26 grade_3 l Grade}
+ addUserKnob {41 multiply_3 l multiply T Grade4.multiply}
+ addUserKnob {41 gamma_3 l gamma T Grade4.gamma}
+ addUserKnob {41 black l lift T Grade4.black}
+ addUserKnob {20 refract l Refract}
+ addUserKnob {26 refract_direct l "Refract Direct"}
+ addUserKnob {7 exposure_rrd l "<b>Exposure</b> (stops)" R -4 4}
+ addUserKnob {26 grade_4 l Grade}
+ addUserKnob {41 multiply_4 l multiply T Grade5.multiply}
+ addUserKnob {41 gamma_4 l gamma T Grade5.gamma}
+ addUserKnob {41 black_1 l lift T Grade5.black}
+ addUserKnob {26 refract_indirect l "Refract Indirect"}
+ addUserKnob {7 exposure_rri l "<b>Exposure</b> (stops)" R -4 4}
+ addUserKnob {26 grade_5 l Grade}
+ addUserKnob {41 multiply_5 l multiply T Grade6.multiply}
+ addUserKnob {41 gamma_5 l gamma T Grade6.gamma}
+ addUserKnob {41 black_2 l lift T Grade6.black}
+ addUserKnob {20 sss l SSS}
+ addUserKnob {26 sss_direct l "SSS Direct"}
+ addUserKnob {7 exposure_sssd l "<b>Exposure</b> (stops)" R -4 4}
+ addUserKnob {26 grade_6 l Grade}
+ addUserKnob {41 multiply_6 l multiply T Grade7.multiply}
+ addUserKnob {41 gamma_6 l gamma T Grade7.gamma}
+ addUserKnob {41 black_3 l lift T Grade7.black}
+ addUserKnob {26 sss_indirect l SSS_Indirect}
+ addUserKnob {7 exposure_sssi l "<b>Exposure</b> (stops)" R -4 4}
+ addUserKnob {41 multiply_7 l multiply T Grade8.multiply}
+ addUserKnob {41 gamma_7 l gamma T Grade8.gamma}
+ addUserKnob {41 black_4 l lift T Grade8.black}
+}
+ BackdropNode {
+  inputs 0
+  name BackdropNode1
+  tile_color 0x7171c600
+  label diffuse
+  note_font_size 42
+  xpos 605
+  ypos -550
+  bdwidth 298
+  bdheight 970
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode2
+  tile_color 0x8e8e3800
+  label reflect
+  note_font_size 42
+  xpos 1403
+  ypos -550
+  bdwidth 340
+  bdheight 1023
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode3
+  tile_color 0xaaaaaa00
+  label "refract\n"
+  note_font_size 42
+  xpos 2368
+  ypos -550
+  bdwidth 390
+  bdheight 909
+ }
+ BackdropNode {
+  inputs 0
+  name BackdropNode4
+  tile_color 0x388e8e00
+  label sss
+  note_font_size 42
+  xpos 3516
+  ypos -550
+  bdwidth 323
+  bdheight 930
+ }
+ Input {
+  inputs 0
+  name mask
+  xpos -276
+  ypos 3224
+  number 1
+ }
+ Input {
+  inputs 0
+  name Input1
+  xpos -12
+  ypos -602
+ }
+ Dot {
+  name Dot87
+  xpos 10
+  ypos -471
+ }
+set N360f6400 [stack 0]
+ Dot {
+  name Dot16
+  xpos -128
+  ypos -471
+ }
+ Shuffle {
+  alpha white
+  name SolidAlpha
+  xpos -150
+  ypos 3166
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy1
+  xpos -150
+  ypos 3225
+ }
+push $N360f6400
+ Dot {
+  name Dot17
+  xpos 177
+  ypos -471
+ }
+set N360f7400 [stack 0]
+ Dot {
+  name Dot81
+  xpos 637
+  ypos -470
+ }
+set N360f7800 [stack 0]
+ Dot {
+  name Dot82
+  xpos 835
+  ypos -470
+ }
+set N360f7c00 [stack 0]
+ Dot {
+  name Dot83
+  xpos 1435
+  ypos -470
+ }
+set N351cc000 [stack 0]
+ Dot {
+  name Dot84
+  xpos 1582
+  ypos -470
+ }
+set N351cc400 [stack 0]
+ Dot {
+  name Dot85
+  xpos 2400
+  ypos -470
+ }
+set N351cc800 [stack 0]
+ Dot {
+  name Dot86
+  xpos 2557
+  ypos -470
+ }
+set N351ccc00 [stack 0]
+ Dot {
+  name Dot88
+  xpos 3548
+  ypos -470
+ }
+set N351cd000 [stack 0]
+ Dot {
+  name Dot89
+  xpos 3731
+  ypos -470
+ }
+add_layer {lgt01_sss_indirect lgt01_sss_indirect.red lgt01_sss_indirect.green lgt01_sss_indirect.blue}
+ Shuffle2 {
+  fromInput1 {{0} B}
+  in1 lgt01_sss_indirect
+  fromInput2 {{0} B}
+  mappings "4 lgt01_sss_indirect.red 0 0 rgba.red 0 0 lgt01_sss_indirect.green 0 1 rgba.green 0 1 lgt01_sss_indirect.blue 0 2 rgba.blue 0 2 black -1 -1 rgba.alpha 0 3"
+  name sss_indirect
+  label "\[value in1]"
+  xpos 3709
+  ypos -357
+ }
+ EXPTool {
+  mode Stops
+  gang false
+  red {{parent.exposure_sssi}}
+  green {{parent.exposure_sssi}}
+  blue {{parent.exposure_sssi}}
+  maskChannelInput -rgba.alpha
+  name Exposure8
+  xpos 3709
+  ypos -28
+ }
+ Grade {
+  maskChannelInput -rgba.alpha
+  name Grade8
+  xpos 3709
+  ypos 26
+ }
+ Dot {
+  name Dot14
+  xpos 3731
+  ypos 2761
+ }
+set N35ece400 [stack 0]
+ Dot {
+  name Dot15
+  xpos 381
+  ypos 2867
+ }
+push $N35ece400
+push $N351cd000
+add_layer {lgt01_sss_direct lgt01_sss_direct.red lgt01_sss_direct.green lgt01_sss_direct.blue}
+ Shuffle2 {
+  fromInput1 {{0} B}
+  in1 lgt01_sss_direct
+  fromInput2 {{0} B}
+  mappings "4 lgt01_sss_direct.red 0 0 rgba.red 0 0 lgt01_sss_direct.green 0 1 rgba.green 0 1 lgt01_sss_direct.blue 0 2 rgba.blue 0 2 black -1 -1 rgba.alpha 0 3"
+  name sss_direct
+  label "\[value in1]"
+  xpos 3526
+  ypos -365
+ }
+ EXPTool {
+  mode Stops
+  gang false
+  red {{parent.exposure_sssd}}
+  green {{parent.exposure_sssd}}
+  blue {{parent.exposure_sssd}}
+  maskChannelInput -rgba.alpha
+  name Exposure7
+  xpos 3526
+  ypos -25
+ }
+ Grade {
+  maskChannelInput -rgba.alpha
+  name Grade7
+  xpos 3526
+  ypos 25
+ }
+ Dot {
+  name Dot3
+  xpos 3548
+  ypos 2473
+ }
+set N35ecf800 [stack 0]
+ Dot {
+  name Dot11
+  xpos 380
+  ypos 2556
+ }
+push $N35ecf800
+push $N351ccc00
+add_layer {lgt01_refract_indirect lgt01_refract_indirect.red lgt01_refract_indirect.green lgt01_refract_indirect.blue}
+ Shuffle2 {
+  fromInput1 {{0} B}
+  in1 lgt01_refract_indirect
+  fromInput2 {{0} B}
+  in2 alpha
+  mappings "4 lgt01_refract_indirect.red 0 0 rgba.red 0 0 lgt01_refract_indirect.green 0 1 rgba.green 0 1 lgt01_refract_indirect.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  name refract_indirect
+  label "\[value in1]"
+  xpos 2531
+  ypos -358
+ }
+ EXPTool {
+  mode Stops
+  gang false
+  red {{parent.exposure_rri}}
+  green {{parent.exposure_rri}}
+  blue {{parent.exposure_rri}}
+  maskChannelInput -rgba.alpha
+  name Exposure6
+  xpos 2531
+  ypos 8
+ }
+ Grade {
+  maskChannelInput -rgba.alpha
+  name Grade6
+  xpos 2531
+  ypos 56
+ }
+ Dot {
+  name Dot12
+  xpos 2557
+  ypos 1893
+ }
+ Dot {
+  name Dot13
+  xpos 370
+  ypos 1931
+ }
+set N360a5000 [stack 0]
+push $N360a5000
+push $N351cc800
+add_layer {lgt01_refract_direct lgt01_refract_direct.red lgt01_refract_direct.green lgt01_refract_direct.blue}
+ Shuffle2 {
+  fromInput1 {{0} B}
+  in1 lgt01_refract_direct
+  fromInput2 {{0} B}
+  in2 alpha
+  mappings "4 lgt01_refract_direct.red 0 0 rgba.red 0 0 lgt01_refract_direct.green 0 1 rgba.green 0 1 lgt01_refract_direct.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  name refract_direct
+  label "\[value in1]"
+  xpos 2378
+  ypos -349
+ }
+ EXPTool {
+  mode Stops
+  gang false
+  red {{parent.exposure_rrd}}
+  green {{parent.exposure_rrd}}
+  blue {{parent.exposure_rrd}}
+  maskChannelInput -rgba.alpha
+  name Exposure5
+  xpos 2378
+  ypos 3
+ }
+ Grade {
+  maskChannelInput -rgba.alpha
+  name Grade5
+  xpos 2378
+  ypos 47
+ }
+ Dot {
+  name Dot4
+  xpos 2400
+  ypos 1466
+ }
+ Dot {
+  name Dot6
+  xpos 373
+  ypos 1511
+ }
+set N35ac0400 [stack 0]
+push $N35ac0400
+push $N351cc400
+add_layer {lgt01_reflect_indirect lgt01_reflect_indirect.red lgt01_reflect_indirect.green lgt01_reflect_indirect.blue}
+ Shuffle2 {
+  fromInput1 {{0} B}
+  in1 lgt01_reflect_indirect
+  fromInput2 {{0} B}
+  in2 alpha
+  mappings "4 lgt01_reflect_indirect.red 0 0 rgba.red 0 0 lgt01_reflect_indirect.green 0 1 rgba.green 0 1 lgt01_reflect_indirect.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  name reflect_indirect
+  label "\[value in1]"
+  xpos 1560
+  ypos -351
+ }
+ EXPTool {
+  mode Stops
+  gang false
+  red {{parent.exposure_ri}}
+  green {{parent.exposure_ri}}
+  blue {{parent.exposure_ri}}
+  maskChannelInput -rgba.alpha
+  name Exposure4
+  xpos 1560
+  ypos 28
+ }
+ Grade {
+  maskChannelInput -rgba.alpha
+  name Grade4
+  xpos 1560
+  ypos 79
+ }
+ Dot {
+  name Dot5
+  xpos 1582
+  ypos 1202
+ }
+ Dot {
+  name Dot7
+  xpos 343
+  ypos 1266
+ }
+set N35ac1800 [stack 0]
+push $N35ac1800
+push $N351cc000
+add_layer {lgt01_reflect_direct lgt01_reflect_direct.red lgt01_reflect_direct.green lgt01_reflect_direct.blue}
+ Shuffle2 {
+  fromInput1 {{0} B}
+  in1 lgt01_reflect_direct
+  fromInput2 {{0} B}
+  in2 alpha
+  mappings "4 lgt01_reflect_direct.red 0 0 rgba.red 0 0 lgt01_reflect_direct.green 0 1 rgba.green 0 1 lgt01_reflect_direct.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  name reflect_direct
+  label "\[value in1]"
+  xpos 1413
+  ypos -352
+ }
+ EXPTool {
+  mode Stops
+  gang false
+  red {{parent.exposure_rd}}
+  green {{parent.exposure_rd}}
+  blue {{parent.exposure_rd}}
+  maskChannelInput -rgba.alpha
+  name Exposure3
+  xpos 1413
+  ypos 35
+ }
+ Grade {
+  maskChannelInput -rgba.alpha
+  name Grade3
+  xpos 1413
+  ypos 86
+ }
+ Dot {
+  name Dot2
+  xpos 1435
+  ypos 954
+ }
+ Dot {
+  name Dot8
+  xpos 378
+  ypos 980
+ }
+set N358a0c00 [stack 0]
+push $N358a0c00
+push $N360f7c00
+add_layer {lgt01_diffuse_indirect lgt01_diffuse_indirect.red lgt01_diffuse_indirect.green lgt01_diffuse_indirect.blue}
+ Shuffle2 {
+  fromInput1 {{0} B}
+  in1 lgt01_diffuse_indirect
+  fromInput2 {{0} B}
+  in2 alpha
+  mappings "4 lgt01_diffuse_indirect.red 0 0 rgba.red 0 0 lgt01_diffuse_indirect.green 0 1 rgba.green 0 1 lgt01_diffuse_indirect.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  name diffuse_indirect
+  label "\[value in1]"
+  xpos 813
+  ypos -337
+ }
+ EXPTool {
+  mode Stops
+  gang false
+  red {{parent.exposure_di}}
+  green {{parent.exposure_di}}
+  blue {{parent.exposure_di}}
+  maskChannelInput -rgba.alpha
+  name Exposure2
+  xpos 813
+  ypos 74
+ }
+ Grade {
+  maskChannelInput -rgba.alpha
+  name Grade2
+  xpos 813
+  ypos 115
+ }
+ Dot {
+  name Dot1
+  xpos 835
+  ypos 374
+ }
+ Dot {
+  name Dot9
+  xpos 342
+  ypos 374
+ }
+set N35472000 [stack 0]
+push $N35472000
+push $N360f7800
+add_layer {lgt01_diffuse_direct lgt01_diffuse_direct.red lgt01_diffuse_direct.green lgt01_diffuse_direct.blue}
+ Shuffle2 {
+  fromInput1 {{0} B}
+  in1 lgt01_diffuse_direct
+  fromInput2 {{0} B}
+  in2 alpha
+  mappings "4 lgt01_diffuse_direct.red 0 0 rgba.red 0 0 lgt01_diffuse_direct.green 0 1 rgba.green 0 1 lgt01_diffuse_direct.blue 0 2 rgba.blue 0 2 rgba.alpha 1 0 rgba.alpha 0 3"
+  name diffuse_direct
+  label "\[value in1]"
+  xpos 622
+  ypos -341
+ }
+ EXPTool {
+  mode Stops
+  gang false
+  red {{parent.exposure_dd}}
+  green {{parent.exposure_dd}}
+  blue {{parent.exposure_dd}}
+  maskChannelInput -rgba.alpha
+  name Exposure1
+  xpos 615
+  ypos 73
+ }
+ Grade {
+  maskChannelInput -rgba.alpha
+  name Grade1
+  xpos 615
+  ypos 126
+ }
+ Dot {
+  name Dot10
+  xpos 305
+  ypos 125
+ }
+set N35473000 [stack 0]
+push $N35473000
+push $N360f7400
+push $N360f7400
+ Merge2 {
+  inputs 2
+  operation from
+  Achannels lgt01_diffuse_direct
+  name from_diffuse_direct
+  tile_color 0xff0000ff
+  label "\[value Achannels]"
+  xpos 333
+  ypos -348
+ }
+set N35473400 [stack 0]
+push $N35473400
+ Merge2 {
+  inputs 2
+  operation from
+  Achannels lgt01_diffuse_indirect
+  name from_diffuse_indirect
+  tile_color 0xff0000ff
+  label "\[value Achannels]"
+  xpos 333
+  ypos -298
+ }
+set N35473800 [stack 0]
+push $N35473800
+ Merge2 {
+  inputs 2
+  operation from
+  Achannels lgt01_reflect_direct
+  name from_reflect_direct
+  tile_color 0xff0000ff
+  label "\[value Achannels]"
+  xpos 333
+  ypos -258
+ }
+set N35473c00 [stack 0]
+push $N35473c00
+ Merge2 {
+  inputs 2
+  operation from
+  Achannels lgt01_reflect_indirect
+  name from_reflect_indirect
+  tile_color 0xff0000ff
+  label "\[value Achannels]"
+  xpos 333
+  ypos -218
+ }
+set N35bc6000 [stack 0]
+push $N35bc6000
+ Merge2 {
+  inputs 2
+  operation from
+  Achannels lgt01_refract_direct
+  name from_refract_direct
+  tile_color 0xff0000ff
+  label "\[value Achannels]"
+  xpos 333
+  ypos -178
+ }
+set N35bc6400 [stack 0]
+push $N35bc6400
+ Merge2 {
+  inputs 2
+  operation from
+  Achannels lgt01_refract_indirect
+  name from_refract_indirect
+  tile_color 0xff0000ff
+  label "\[value Achannels]"
+  xpos 333
+  ypos -136
+ }
+set N35bc6800 [stack 0]
+push $N35bc6800
+ Merge2 {
+  inputs 2
+  operation from
+  Achannels lgt01_sss_direct
+  name from_sss_direct
+  tile_color 0xff0000ff
+  label "\[value Achannels]"
+  xpos 333
+  ypos -96
+ }
+set N35bc6c00 [stack 0]
+push $N35bc6c00
+ Merge2 {
+  inputs 2
+  operation from
+  Achannels lgt01_sss_indirect
+  name from_sss_indirect
+  tile_color 0xff0000ff
+  label "\[value Achannels]"
+  xpos 333
+  ypos -56
+ }
+push $N360f7400
+ Remove {
+  channels rgb
+  name remove_rgb
+  label "\[value operation]"
+  xpos 155
+  ypos -60
+ }
+ Switch {
+  inputs 2
+  which {{parent.output}}
+  name Switch1
+  xpos 155
+  ypos 38
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge43
+  xpos 155
+  ypos 133
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  out2 lgt01_diffuse_direct
+  name Copy_diffuse_direct
+  label "\[value out2]"
+  xpos 155
+  ypos 244
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge39
+  xpos 155
+  ypos 382
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  out2 lgt01_diffuse_indirect
+  name Copy_diffuse_indirect
+  label "\[value out2]"
+  xpos 155
+  ypos 478
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge3
+  xpos 155
+  ypos 988
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  out2 lgt01_reflect_direct
+  name Copy_reflect_direct
+  label "\[value out2]"
+  xpos 155
+  ypos 1084
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge2
+  xpos 155
+  ypos 1274
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  out2 lgt01_reflect_indirect
+  name Copy_reflect_indirect
+  label "\[value out2]"
+  xpos 155
+  ypos 1366
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge45
+  xpos 155
+  ypos 1523
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  out2 lgt01_refract_direct
+  name Copy_refract_direct
+  label "\[value out2]"
+  xpos 152
+  ypos 1644
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge1
+  xpos 152
+  ypos 1939
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  out2 lgt01_refract_indirect
+  name Copy_refract_indirect
+  label "\[value out2]"
+  xpos 152
+  ypos 2063
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge46
+  xpos 155
+  ypos 2569
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  out2 lgt01_sss_direct
+  name Copy_sss_direct
+  label "\[value out2]"
+  xpos 155
+  ypos 2691
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge4
+  xpos 156
+  ypos 2880
+ }
+ ShuffleCopy {
+  inputs 2
+  alpha alpha2
+  black red
+  white green
+  red2 blue
+  out2 lgt01_sss_indirect
+  name Copy_sss_indirect
+  label "\[value out2]"
+  xpos 155
+  ypos 3000
+ }
+push $N360f6400
+ Keymix {
+  inputs 3
+  name Keymix1
+  xpos -12
+  ypos 3225
+ }
+ Output {
+  name Output1
+  xpos -12
+  ypos 3316
+ }
+end_group
