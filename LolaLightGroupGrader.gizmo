@@ -165,7 +165,7 @@ Gizmo {
   xpos -588
   ypos -471
  }
-set N3dcd5800 [stack 0]
+set N3ee5b800 [stack 0]
  Dot {
   name Dot16
   xpos -726
@@ -185,61 +185,61 @@ set N3dcd5800 [stack 0]
   xpos -789
   ypos 4589
  }
-push $N3dcd5800
+push $N3ee5b800
  Dot {
   name Dot17
   xpos -198
   ypos -471
  }
-set N3dcf2800 [stack 0]
+set N30e3c800 [stack 0]
  Dot {
   name Dot18
   xpos 183
   ypos -470
  }
-set N3dcf2c00 [stack 0]
+set N30e3cc00 [stack 0]
  Dot {
   name Dot81
   xpos 637
   ypos -470
  }
-set N3dcf3000 [stack 0]
+set N30e3d000 [stack 0]
  Dot {
   name Dot82
   xpos 835
   ypos -470
  }
-set N3dcf3400 [stack 0]
+set N30e3d400 [stack 0]
  Dot {
   name Dot83
   xpos 1435
   ypos -470
  }
-set N3dcf3800 [stack 0]
+set N30e3d800 [stack 0]
  Dot {
   name Dot84
   xpos 1582
   ypos -470
  }
-set N3dcf3c00 [stack 0]
+set N30e3dc00 [stack 0]
  Dot {
   name Dot85
   xpos 2400
   ypos -470
  }
-set N3dd0c000 [stack 0]
+set N8475a000 [stack 0]
  Dot {
   name Dot86
   xpos 2557
   ypos -470
  }
-set N3dd0c400 [stack 0]
+set N8475a400 [stack 0]
  Dot {
   name Dot88
   xpos 3548
   ypos -470
  }
-set N3dd0c800 [stack 0]
+set N8475a800 [stack 0]
  Dot {
   name Dot89
   xpos 3731
@@ -329,9 +329,9 @@ add_layer {lgt01_sss_indirect lgt01_sss_indirect.red lgt01_sss_indirect.green lg
   xpos 480
   ypos 3975
  }
-set Ne2acd800 [stack 0]
-push $Ne2acd800
-push $N3dd0c800
+set N888c9800 [stack 0]
+push $N888c9800
+push $N8475a800
 add_layer {lgt01_sss_direct lgt01_sss_direct.red lgt01_sss_direct.green lgt01_sss_direct.blue}
  Shuffle2 {
   fromInput1 {{0} B}
@@ -381,7 +381,6 @@ add_layer {lgt01_sss_direct lgt01_sss_direct.red lgt01_sss_direct.green lgt01_ss
  }
  Dot {
   name Dot21
-  selected true
   xpos 3542
   ypos 3064
  }
@@ -419,9 +418,9 @@ add_layer {lgt01_sss_direct lgt01_sss_direct.red lgt01_sss_direct.green lgt01_ss
   xpos 469
   ypos 3664
  }
-set Ne2b2c400 [stack 0]
-push $Ne2b2c400
-push $N3dd0c400
+set N34b72400 [stack 0]
+push $N34b72400
+push $N8475a400
 add_layer {lgt01_refract_indirect lgt01_refract_indirect.red lgt01_refract_indirect.green lgt01_refract_indirect.blue}
  Shuffle2 {
   fromInput1 {{0} B}
@@ -478,9 +477,9 @@ add_layer {lgt01_refract_indirect lgt01_refract_indirect.red lgt01_refract_indir
   xpos 476
   ypos 1931
  }
-set Ne2b5c000 [stack 0]
-push $Ne2b5c000
-push $N3dd0c000
+set N85672000 [stack 0]
+push $N85672000
+push $N8475a000
 add_layer {lgt01_refract_direct lgt01_refract_direct.red lgt01_refract_direct.green lgt01_refract_direct.blue}
  Shuffle2 {
   fromInput1 {{0} B}
@@ -537,9 +536,9 @@ add_layer {lgt01_refract_direct lgt01_refract_direct.red lgt01_refract_direct.gr
   xpos 479
   ypos 1515
  }
-set Ne2b5dc00 [stack 0]
-push $Ne2b5dc00
-push $N3dcf3c00
+set N85673c00 [stack 0]
+push $N85673c00
+push $N30e3dc00
 add_layer {lgt01_reflect_indirect lgt01_reflect_indirect.red lgt01_reflect_indirect.green lgt01_reflect_indirect.blue}
  Shuffle2 {
   fromInput1 {{0} B}
@@ -596,9 +595,9 @@ add_layer {lgt01_reflect_indirect lgt01_reflect_indirect.red lgt01_reflect_indir
   xpos 449
   ypos 1266
  }
-set Ne2b89800 [stack 0]
-push $Ne2b89800
-push $N3dcf3800
+set N4556b800 [stack 0]
+push $N4556b800
+push $N30e3d800
 add_layer {lgt01_reflect_direct lgt01_reflect_direct.red lgt01_reflect_direct.green lgt01_reflect_direct.blue}
  Shuffle2 {
   fromInput1 {{0} B}
@@ -655,9 +654,9 @@ add_layer {lgt01_reflect_direct lgt01_reflect_direct.red lgt01_reflect_direct.gr
   xpos 490
   ypos 980
  }
-set Ne2bb9400 [stack 0]
-push $Ne2bb9400
-push $N3dcf3400
+set N96e63400 [stack 0]
+push $N96e63400
+push $N30e3d400
 add_layer {lgt01_diffuse_indirect lgt01_diffuse_indirect.red lgt01_diffuse_indirect.green lgt01_diffuse_indirect.blue}
  Shuffle2 {
   fromInput1 {{0} B}
@@ -714,9 +713,9 @@ add_layer {lgt01_diffuse_indirect lgt01_diffuse_indirect.red lgt01_diffuse_indir
   xpos 454
   ypos 374
  }
-set N3e17d000 [stack 0]
-push $N3e17d000
-push $N3dcf3000
+set N9681d000 [stack 0]
+push $N9681d000
+push $N30e3d000
 add_layer {lgt01_diffuse_direct lgt01_diffuse_direct.red lgt01_diffuse_direct.green lgt01_diffuse_direct.blue}
  Shuffle2 {
   fromInput1 {{0} B}
@@ -768,9 +767,9 @@ add_layer {lgt01_diffuse_direct lgt01_diffuse_direct.red lgt01_diffuse_direct.gr
   xpos 417
   ypos 125
  }
-set N3e1b4800 [stack 0]
-push $N3e1b4800
-push $N3dcf2c00
+set N3b150800 [stack 0]
+push $N3b150800
+push $N30e3cc00
  Remove {
   channels rgb
   name remove_rgb1
@@ -897,29 +896,42 @@ push $N3dcf2c00
   xpos 165
   ypos 2973
  }
-set N3e220000 [stack 0]
-push $N3e220000
+set N3baa8000 [stack 0]
+ Dot {
+  name Dot24
+  xpos 346
+  ypos 2973
+ }
+set N83df7400 [stack 0]
 add_layer {albedo albedo.red albedo.green albedo.blue}
  Shuffle {
   in albedo
   name Shuffle1
   label "\[value in]"
-  xpos 143
-  ypos 3109
+  xpos 324
+  ypos 3104
  }
-set N3e220400 [stack 0]
- Merge2 {
+set N3baa8400 [stack 0]
+push $N83df7400
+ Dot {
+  name Dot23
+  xpos 572
+  ypos 2973
+ }
+ MergeExpression {
   inputs 2
-  operation divide
-  name Merge5
-  xpos 339
-  ypos 3116
+  expr0 Br/Ar
+  expr1 Bg/Ag
+  expr2 Bb/Ab
+  name DivideBbyA
+  xpos 550
+  ypos 3111
  }
  Saturation {
   mode Average
   name SaturationLGT
-  xpos 339
-  ypos 3163
+  xpos 550
+  ypos 3200
  }
  EXPTool {
   mode Stops
@@ -927,23 +939,42 @@ set N3e220400 [stack 0]
   green {{parent.exp_lgt}}
   blue {{parent.exp_lgt}}
   name ExposureLGT
-  xpos 339
-  ypos 3182
+  selected true
+  xpos 546
+  ypos 3237
  }
  Multiply {
   channels rgb
+  value {1 1 1 1}
   value_panelDropped true
   name Mult_LGT
-  xpos 339
-  ypos 3208
+  xpos 550
+  ypos 3259
  }
-push $N3e220400
+push $N3baa8400
  Merge2 {
   inputs 2
   operation multiply
   name Merge6
-  xpos 143
-  ypos 3208
+  xpos 324
+  ypos 3259
+ }
+ Expression {
+  expr0 isnan(r)?0:r
+  expr1 isnan(g)?0:g
+  expr2 isnan(b)?0:b
+  name Expression1
+  label "kill nans"
+  xpos 324
+  ypos 3316
+ }
+push $N3baa8000
+ Switch {
+  inputs 2
+  which {{SaturationLGT.saturation!=1?1:ExposureLGT.red!=0?1:Mult_LGT.value!=1?1:0}}
+  name Switch2
+  xpos 147
+  ypos 3323
  }
  Merge2 {
   inputs 2
@@ -990,14 +1021,14 @@ push $N3e220400
   xpos 144
   ypos 4126
  }
-push $N3dcf2800
+push $N30e3c800
  Dot {
   name Dot19
   xpos -198
   ypos -135
  }
-set N3e259000 [stack 0]
-push $N3e259000
+set N907a5800 [stack 0]
+push $N907a5800
  Merge2 {
   inputs 2
   operation from
@@ -1008,8 +1039,8 @@ push $N3e259000
   xpos -34
   ypos -62
  }
-set N3e259400 [stack 0]
-push $N3e259400
+set N907a5c00 [stack 0]
+push $N907a5c00
  Merge2 {
   inputs 2
   operation from
@@ -1020,8 +1051,8 @@ push $N3e259400
   xpos -34
   ypos -11
  }
-set N3e259800 [stack 0]
-push $N3e259800
+set N3c474000 [stack 0]
+push $N3c474000
  Merge2 {
   inputs 2
   operation from
@@ -1032,8 +1063,8 @@ push $N3e259800
   xpos -34
   ypos 29
  }
-set N3e259c00 [stack 0]
-push $N3e259c00
+set N3c474400 [stack 0]
+push $N3c474400
  Merge2 {
   inputs 2
   operation from
@@ -1044,8 +1075,8 @@ push $N3e259c00
   xpos -34
   ypos 69
  }
-set N3e288000 [stack 0]
-push $N3e288000
+set N3c474800 [stack 0]
+push $N3c474800
  Merge2 {
   inputs 2
   operation from
@@ -1056,8 +1087,8 @@ push $N3e288000
   xpos -34
   ypos 109
  }
-set N3e288400 [stack 0]
-push $N3e288400
+set N3c474c00 [stack 0]
+push $N3c474c00
  Merge2 {
   inputs 2
   operation from
@@ -1068,8 +1099,8 @@ push $N3e288400
   xpos -34
   ypos 151
  }
-set N3e288800 [stack 0]
-push $N3e288800
+set N3c475000 [stack 0]
+push $N3c475000
  Merge2 {
   inputs 2
   operation from
@@ -1080,8 +1111,8 @@ push $N3e288800
   xpos -34
   ypos 191
  }
-set N3e288c00 [stack 0]
-push $N3e288c00
+set N3c475400 [stack 0]
+push $N3c475400
  Merge2 {
   inputs 2
   operation from
@@ -1092,7 +1123,7 @@ push $N3e288c00
   xpos -34
   ypos 231
  }
-push $N3e259000
+push $N907a5800
  Remove {
   channels rgb
   name remove_rgb
@@ -1114,7 +1145,7 @@ push $N3e259000
   xpos -259
   ypos 4385
  }
-push $N3dcd5800
+push $N3ee5b800
  Keymix {
   inputs 3
   name Keymix1
