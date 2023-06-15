@@ -11,7 +11,7 @@ def get_layers(thisNode):
 def get_aovs_per_lightgroup(node):
     '''Returns a dictionary of lightgroups containing lists of all the aovs under each) '''
 
-    lightGroupRegex = re.compile(r'(LGT|lgt\d+)(_\w+_?\w+)')
+    lightGroupRegex = re.compile(r'(LGT\d+)(_\w+_?\w+)')
     layers =' '.join ( get_layers(node) )
     aovsPerLG = lightGroupRegex.findall(layers)
     aovsPerLGSorted = {}
