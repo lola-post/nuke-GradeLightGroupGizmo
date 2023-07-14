@@ -2,45 +2,20 @@ import re
 import nuke
 import nukescripts
 
+from GradeLightGroup_Node_Functions_callbackversion import LIGHT_GROUP_REGEX, get_layers, get_aovs_per_lightgroup
+
 def deselect_all_nodes():
     for n in nuke.selectedNodes():
         n['selected'].setValue(False)
 
-def get_layers(readNode):
-    '''returns a list of all the layers '''
-    channels = readNode.channels()
-    layers = list( set([c.split('.')[0] for c in channels]) )
-    layers.sort()
-    return layers
-
-
-def get_lightgroups(node, flags ):
+def get_lightgroups(node ):
     '''Returns a list of aovs which are lightgroups (based on naming convention flags set in LightGroupLabels list) '''
 
     lightGroupLayers=[]
-    for aov in get_layers(n):
-
-        for flag in flags:
-            if flag in aov and aov not in lightGroupLayers:
-                lightGroupLayers.append(aov)
+    for lg in get_aovs_per_lightgroup(node):
+        lightGroupLayers.append(lg)
     lightGroupLayers.sort()
     return lightGroupLayers
-
-def get_aovs_per_lightgroup(node):
-    '''Returns a dictionary of lightgroups containing lists of all the aovs under each) '''
-
-    lightGroupRegex = re.compile(r'(lgt\d+)(_\w+_?\w+)')
-    layers =' '.join ( get_layers(node) )
-    aovsPerLG = lightGroupRegex.findall(layers)
-    aovsPerLGSorted = {}
-    for aov in aovsPerLG:
-        lg = aov[0]
-        if lg not in aovsPerLGSorted:
-            aovsPerLGSorted[aov[0]] = []
-    for aov in aovsPerLG:
-        aovsPerLGSorted[aov[0]].append(aov[1] )
-
-    return aovsPerLGSorted
 
 
 def break_out_by_lightgroup(node):
@@ -71,7 +46,7 @@ def shuffle_out_lightgroups(node, x_space=600, y_space=300, emission=True):
     b_pipe_nodes=[remove_rgb] #all the merge nodes will be added to this list
     top_dots = [unpremult]
 
-    for lg in get_aovs_per_lightgroup(node):
+    for lg in get_lightgroups(node):
         deselect_all_nodes()
         selected=[]
         x_pos +=x_space
@@ -83,11 +58,13 @@ def shuffle_out_lightgroups(node, x_space=600, y_space=300, emission=True):
         dot.setYpos(unpremult.ypos())
 
 
-        lg_grade=nuke.nodes.LolaLightGroupGrader(label=lg, inputs=[top_dots[indexNo+1]] )
+        lg_grade=nuke.nodes.LolaLightGroupGrader_v1_1(label=lg, inputs=[top_dots[indexNo+1]] )
+
 
 
         lg_grade['get_light_groups'].execute()
         lg_grade['lightgroup'].setValue( lg )
+        lg_grade['update'].execute()
         lg_grade['output'].setValue( 'lightgroup graded' )
         #shuffle_node['postage_stamp'].setValue( settings['pstamps'])
         lg_grade.setYpos(dot.ypos()+ 100)
@@ -134,11 +111,11 @@ def shuffle_out_lightgroups(node, x_space=600, y_space=300, emission=True):
         multiply_node['channels'].setValue('rbg')
         temp_dot=nuke.nodes.Dot( ) #defines corner of backdrop
         temp_dot.setXpos(x_pos+int(x_space/2))
-        temp_dot.setYpos(shuffle_node.ypos()+ y_space*3)
+        temp_dot.setYpos(multiply_node.ypos()+ y_space*3)
         y_pos +=y_space
         #from_node=nuke.nodes.Merge2 (operation ='from', tile_color='4278190335.0', label = '<i>'+lg, inputs=[ b_pipe_nodes[indexNo], b_pipe_nodes[indexNo] ], Achannels=lg)
         #from_node.setXYpos(node.xpos(), y_pos )
-        bottom_corner = nuke.nodes.Dot( inputs=[ shuffle_node ], tile_color='536805631.0', label = '<i>'+lg )
+        bottom_corner = nuke.nodes.Dot( inputs=[ multiply_node ], tile_color='536805631.0', label = '<i>'+lg )
         y_pos +=int(y_space/2)
         bottom_corner.setXYpos(x_pos, y_pos )
         merge = nuke.nodes.Merge2 (operation ='plus', label = '<i>'+lg, tile_color='536805631.0', inputs=[ b_pipe_nodes[indexNo], bottom_corner ])
