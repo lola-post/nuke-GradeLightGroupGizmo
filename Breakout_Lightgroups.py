@@ -2,7 +2,7 @@ import re
 import nuke
 import nukescripts
 
-from GradeLightGroup_Node_Functions_callbackversion import LIGHT_GROUP_REGEX, get_layers, get_aovs_per_lightgroup
+from GradeLightGroup_Node_Functions import LIGHT_GROUP_REGEX, get_layers, get_aovs_per_lightgroup
 
 def deselect_all_nodes():
     for n in nuke.selectedNodes():
@@ -58,13 +58,13 @@ def shuffle_out_lightgroups(node, x_space=600, y_space=300, emission=True):
         dot.setYpos(unpremult.ypos())
 
 
-        lg_grade=nuke.nodes.LolaLightGroupGrader_v1_1(label=lg, inputs=[top_dots[indexNo+1]] )
+        lg_grade=nuke.nodes.LolaLightGroupGrader_v1_2( inputs=[top_dots[indexNo+1]] )
 
 
 
         lg_grade['get_light_groups'].execute()
-        lg_grade['lightgroup'].setValue( lg )
-        lg_grade['update'].execute()
+        lg_grade['lightgroup'].setValue(lg)
+        #lg_grade['update'].execute()
         lg_grade['output'].setValue( 'lightgroup graded' )
         #shuffle_node['postage_stamp'].setValue( settings['pstamps'])
         lg_grade.setYpos(dot.ypos()+ 100)
