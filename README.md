@@ -34,7 +34,7 @@ Combining the Grade LightGroup and Grade Albedo gizmos correctly enables the col
 
 ## BreakOut Lightgroups
 
-![example breakout](breakout-lightgroups-example.png)
+![example breakout](/breakout-lightgroups-example.png)
 
 This generates a lighting mini comp from the selected render. Assuming beauty passes exist and match naming conventions renders will be seperated into lightgroup paths and recombined.
 The b-pipe is respected and each raded lightgroup (and Emission if present) is recombined). The script includes a GradeAlbedo node.
