@@ -130,11 +130,16 @@ def shuffle_out_lightgroups(node, x_space=600, y_space=300, emission=True):
         indexNo +=1
 
     y_pos +=y_space
+    grade_albedo= nuke.nodes.grade_albedo( disable=True, inputs = [merge] )
+    grade_albedo.setXYpos(node.xpos(), y_pos )
+    y_pos+=y_space
+    
     alpha_dot = nuke.nodes.Dot(inputs = [beautyDot])
     alpha_dot2 = nuke.nodes.Dot(inputs = [alpha_dot])
     alpha_dot.setXYpos(unpremult.xpos()-int(x_space/2), beautyDot.ypos() )
+
     alpha_dot2.setXYpos(alpha_dot.xpos(), y_pos )
-    copy_alpha = nuke.nodes.Copy(from0 = 'rgba.alpha', to0 = 'rgba.alpha', inputs = [merge, alpha_dot2] )
+    copy_alpha = nuke.nodes.Copy(from0 = 'rgba.alpha', to0 = 'rgba.alpha', inputs = [grade_albedo, alpha_dot2] )
     copy_alpha.setXYpos(node.xpos(), y_pos )
     y_pos+=y_space
     remove_node=nuke.nodes.Remove(inputs = [copy_alpha], operation='keep', channels='rgba', label ='<b>[value operation] [value channels]')
